@@ -1,0 +1,58 @@
+using System.Runtime.CompilerServices;
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    private float v, h; //상하좌우 키값 저장할 변수
+    private float r;
+    //접근제한자, public은 유니티 화면에 사용하고 private은 유니티 화면에 보여지지 않음.
+    [SerializeField]//직렬화를 통해서 inspector 에노출시킴., 일렬로  세워서 패킷화 시키기 쉽게 만드는 것임.
+    public float moveSpeed = 6.0f; //public으로 노출되면 inspector에 노출되지 않아서 따로 노출시켜줘야함.  이건 ㅇ\움직이는 스피드
+    [SerializeField]
+    private float turnSpeed = 200.0f; // 턴 스피드 
+    [SerializeField]
+    private Animator animator;
+
+    void Start() //제일 먼저 호출, 1번만, 그리고 변수 초기화
+    {
+        Debug.Log("Hello World");
+    }
+
+
+//앞으로 가는 키보드 누를 때 앞으로 가면서 뛰는 포즈로 가는 거임.    //
+void Update()
+    {
+        v = Input.GetAxis("Vertical"); //-1.0f~ +1.0f
+        h = Input.GetAxis("Horizontal");
+        r = Input.GetAxis("Mouse X");
+
+        Vector3 moveDir = (Vector3.forward * v) + (Vector3.right * h);
+        transform.Translate(moveDir.normalized * Time.deltaTime * moveSpeed);//이동처리
+        //백터의 크기를 1로 변경하는 것
+        //백터의 정규화 normalized
+        transform.Rotate(Vector3.up * Time.deltaTime * r * turnSpeed);
+
+        //애니메이션 처리
+        animator.SetFloat("forward", v);
+        animator.SetFloat("strafe", h);
+
+
+
+        // transform.position += new Vector3(0, 0, 0.01f);
+        // transform.position += Vector3.forward * 0.01f; // 앞에 친구를 가독성이 좋게 만드는 것임. 앞으로만 가는 것.
+
+        // transform.Translate(Vector3.forward */*속도*/Time.deltaTime * v * moveSpeed);
+        // transform.Translate(Vector3.right */*속도*/Time.deltaTime * h * moveSpeed);
+        //Time.deltaTime을 하면 업데이트 시간이 다른 컴퓨터도 맞출 수 있음.
+
+    }
+}
+//함수(Function), 메소드(Method)
+/* 
+Vector3.forward=Vector3(0,0,1)
+Vector3.up=Vector3(0,1,0)
+Vector3.right=Vector(1,0,0)
+
+Vector3.one=Vector3(1,1,1)
+Vector3.zero=Vector3(0,0,0)
+*/
