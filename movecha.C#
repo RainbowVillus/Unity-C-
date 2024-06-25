@@ -1,0 +1,37 @@
+using System.Runtime.CompilerServices;
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    private float v, h; //상하좌우 키값 저장할 변수
+    //접근제한자, public은 유니티 화면에 사용하고 private은 유니티 화면에 보여지지 않음.
+    public float moveSpeed = 0.01f;
+
+
+    void Start() //제일 먼저 호출, 1번만, 그리고 변수 초기화
+    {
+        Debug.Log("Hello World");
+    }
+
+
+    void Update()
+    {
+        v = Input.GetAxis("Vertical"); //-1.0f~ +1.0f
+        h = Input.GetAxis("Horizontal");
+
+        // transform.position += new Vector3(0, 0, 0.01f);
+        // transform.position += Vector3.forward * 0.01f; // 앞에 친구를 가독성이 좋게 만드는 것임. 앞으로만 가는 것.
+
+        transform.Translate(Vector3.forward */*속도*/moveSpeed);
+
+    }
+}
+//함수(Function), 메소드(Method)
+/* 
+Vector3.forward=Vector3(0,0,1)
+Vector3.up=Vector3(0,1,0)
+Vector3.right=Vector(1,0,0)
+
+Vector3.one=Vector3(1,1,1)
+Vector3.zero=Vector3(0,0,0)
+*/
