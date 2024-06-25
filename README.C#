@@ -1,0 +1,53 @@
+# Unity-C-
+using System.Runtime.CompilerServices;
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    /*void Awake() //이거 꺼도 작동됨.
+    {
+
+    }
+    void OnEnable(){//활성화 될때 마다 호출되는 함수임.
+
+    }*/
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    //키 입력을 받는 방법이 2가지 있는데 InputManager(Legacy), 그리고 Inputsystem(New)이 있음
+
+    //Up Down Arrow 키값을 저장하기 위한 변수를 선언
+    public float v, h; //상하좌우 키값 저장할 변수
+
+
+    void Start() //제일 먼저 호출, 1번만, 그리고 변수 초기화
+    {
+        Debug.Log("Hello World");
+    }
+    /*void FixedUpdate(){//호출되는 간격이 0.02초임, 물리 엔진을 사용할 때 사용함.
+
+    }
+
+    // 화면을 렌더링하는 주기만큼 호출하는데 60FSP이지만  불규칙적이다.
+    */
+
+    void Update()
+    {
+        v = Input.GetAxis("Vertical"); //-1.0f~ +1.0f
+        h = Input.GetAxis("Horizontal");
+        /* Debug.Log("v=" + v);
+         Debug.Log("h=" + h);
+         */
+        // Debug.Log($"h={h} / v={v}");
+
+        // bool isSpaceKeyDown = Input.GetKeyDown(KeyCode.Space);
+        // if (isSpaceKeyDown == true)
+        // {
+        //     Debug.Log(isSpaceKeyDown);
+        // }
+        /* void LateUPdate(){
+
+         }
+         */
+         
+    }
+}
+
