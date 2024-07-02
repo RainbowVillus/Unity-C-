@@ -1,0 +1,58 @@
+using System.Collections;
+using System.Linq.Expressions;
+using UnityEngine;
+
+public class WeaponController : MonoBehaviour
+{
+    public GameObject bulletPrefab;
+    public Transform firePos;
+
+    private new AudioSource audio;
+    private MeshRenderer muzzleFlah;
+    [SerializeField] private AudioClip fireSfx;
+
+    void Start()
+    {
+
+        audio = GetComponent<AudioSource>();
+        muzzleFlah = firePos.GetComponentInChildren<MeshRenderer>();
+        muzzleFlah.enabled = false;
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            //동적으로 Bullet을 할당하겠다.
+            //Instantiate(생성할객체, 위치, 각도, 부모);   
+            Instantiate(bulletPrefab, firePos.position, firePos.rotation);
+            //총소리 발생
+            audio.PlayOneShot(fireSfx, 0.5f);
+            //오디오가 있는 부분과 음량 크기를 정하는 것. 음량 크기는 지금 50으로 되어 있음.
+
+            //Muzzle Flash
+            StartCoroutine(ShowMuzzleFlash()); //코루틴 함수를 사용할 때에는 스타트 함수를 사용해줘야함.
+
+
+        }
+
+    }
+    //코루틴 (Corourtine) 오래 걸리는 작업이라서 어떤 작업중에 조금 또 다시 다른 작업할 때 조금 이렇게 조금씩 조금씩 다 완성 시킴.
+    IEnumerator ShowMuzzleFlash()
+    {
+        //texture Offset을 변경. 즉 총 화염을 바꿔주는 것
+        //(0,0) (0,0.5) (0.5,0) (0.5,0.5)
+        //Random.Range(0,2)=> (0,1)*0.5
+
+        Vector2 offset = new Vector2(Random.Range(0, 2), Random.Range(0, 2)) * 0.5f;
+        muzzleFlah.material.mainTextureOffset = offset;
+
+        muzzleFlah.enabled = true;
+        //waiting...
+        yield return new WaitForSeconds(0.2f);
+
+        muzzleFlah.enabled = false;
+    }
+}
