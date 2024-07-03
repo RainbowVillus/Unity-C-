@@ -1,15 +1,15 @@
-using UnityEngine;
-using Random = UnityEngine.Random;
-public class Barrel : MonoBehaviour
+using UnityEngine; //using Unity를 사용해야 유니티 엔진에 들어있는 함수들을 사용할 수 있음.
+using Random = UnityEngine.Random; //Random 함수는 유니티에 내장되어있는 랜덤 함수임을 명확하게 만든다.
+public class Barrel : MonoBehaviour // Barrel의 MonoBehaviour 타입인 스크립트
 {
-    private new AudioSource audio;
-    private int hitcount; //0으로 초기화 안시켜도 0으로 됨.
-    [SerializeField] private GameObject expEffect;
-    [SerializeField] private Texture[] textures;
-    [SerializeField] private AudioClip expSfx;
-    private new MeshRenderer render;
+    private new AudioSource audio;  //오디오 소스 저장할 애
+    private int hitcount; // 총알을 맞은 횟수를 저장하는 변수, 0으로 초기화 안시켜도 0으로 된다. 그래서 초기값은 0
+    [SerializeField] private GameObject expEffect; // 폭발 이펙트 프리랩 변수를 Inspector에서 볼 수 있게 직렬화 시킴
+    [SerializeField] private Texture[] textures; //사용할 텍스처 배열을 Inspector에서 볼 수 있게 직렬화 
+    [SerializeField] private AudioClip expSfx; //폭발 사운드 클립을 직렬화
+    private new MeshRenderer render; //MeshRender 컴포넌트
 
-    void Start()
+    void Start() 
     {
         render = GetComponentInChildren<MeshRenderer>();
 
