@@ -1,0 +1,121 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.Animations;
+
+public class MonsterController : MonoBehaviour
+{
+    //열거형 변수 정의
+    public enum State { IDLE, TRACE, ATTACK, DIE };
+    //몬스터의 상태를 저장하는 변수
+    public State state = State.IDLE;
+
+    //공격 사정거리
+    [SerializeField] private float attackDist = 2.0f;
+
+    //추적사정거리
+    [SerializeField] private float traceDist = 10.0f;
+
+    //주인공 캐릭터의 transform 컴포넌트를 저장할 변수
+    private Transform playerTr;
+    //몬스터의 transform 
+    private Transform monsterTr;
+    private NavMeshAgent agent;
+    private Animator anim;
+
+    private bool isDie = false;
+    private int hp = 100;
+
+
+    //애니메이터 뷰의 파라미터 해쉬값을 미리 추출
+    private readonly int hashIsTrace = Animator.StringToHash("IsTrace"); //계산하는 과정을 줄여서 시간이 단축됨.
+    private readonly int hashIsAttack = Animator.StringToHash("IsAttack"); //몬스터가 공격하는 파라미터의 해쉬 테이블 계산하는 과정을 줄여서 시간이 단축됨. 
+    private readonly int hashHit = Animator.StringToHash("Hit");
+    private readonly int hashDie = Animator.StringToHash("Die");
+
+
+    void Start()
+    {
+        monsterTr = GetComponent<Transform>(); //monsterTr=transform;
+        playerTr = GameObject.FindGameObjectWithTag("PLAYER")?.GetComponent<Transform>();
+        agent = GetComponent<NavMeshAgent>();
+        anim = GetComponent<Animator>();
+        StartCoroutine(CheckMonsterState());
+        StartCoroutine(MonsterAction());
+    }
+
+    IEnumerator MonsterAction()
+    {
+        //몬스터의 상태값에 따라서 분기처리
+        while (!isDie)
+        {
+
+            switch (state)
+            {
+                case State.IDLE:
+                    agent.isStopped = true;
+                    anim.SetBool(hashIsTrace, false);
+
+                    break;
+                case State.TRACE:
+                    agent.SetDestination(playerTr.position);
+                    agent.isStopped = false;
+                    anim.SetBool(hashIsTrace, true);
+                    anim.SetBool(hashIsAttack, false);
+                    break;
+                case State.ATTACK:
+                    anim.SetBool(hashIsAttack, true);
+                    break;
+                case State.DIE:
+                    anim.SetTrigger(hashDie);
+                    GetComponent<CapsuleCollider>().enabled = false;
+                    agent.isStopped = true;
+                    isDie = true;
+                    break;
+            }
+
+            yield return new WaitForSeconds(0.3f);
+        }
+    }
+
+    // Update is called once per frame
+    IEnumerator CheckMonsterState()
+    {
+        while (isDie == false)
+        {
+
+            if (state == State.DIE) yield break;
+            //두 위치 간의 거리를 측정
+            float distance = Vector3.Distance(monsterTr.position, playerTr.position);
+            state = State.IDLE;
+
+            if (distance <= traceDist)
+            {
+                state = State.TRACE;
+            }
+
+            if (distance <= attackDist)
+            {
+                state = State.ATTACK;
+            }
+            yield return new WaitForSeconds(0.3f);
+        }
+
+    }
+
+    void OnCollisionEnter(Collision coll)
+    {
+        if (coll.collider.CompareTag("BULLET"))
+        {
+            Destroy(coll.gameObject);
+            anim.SetTrigger(hashHit);
+
+            hp -= 20;
+            if (hp <= 0)
+            {
+                state = State.DIE;
+            }
+        }
+    }
+}
+
