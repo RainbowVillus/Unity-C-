@@ -32,7 +32,16 @@ public class MonsterController : MonoBehaviour
     private readonly int hashIsAttack = Animator.StringToHash("IsAttack"); //몬스터가 공격하는 파라미터의 해쉬 테이블 계산하는 과정을 줄여서 시간이 단축됨. 
     private readonly int hashHit = Animator.StringToHash("Hit");
     private readonly int hashDie = Animator.StringToHash("Die");
+    void OnEnable()
+    {
+        //이벤트 리스너 등록(Event Subscription)
+        PlayerController.OnPlayerDie += YouWin;
+    }
 
+    void OnDisable()
+    {
+        PlayerController.OnPlayerDie -= YouWin;
+    }
 
     void Start()
     {
@@ -40,6 +49,7 @@ public class MonsterController : MonoBehaviour
         playerTr = GameObject.FindGameObjectWithTag("PLAYER")?.GetComponent<Transform>();
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
+
         StartCoroutine(CheckMonsterState());
         StartCoroutine(MonsterAction());
     }
@@ -116,6 +126,16 @@ public class MonsterController : MonoBehaviour
                 state = State.DIE;
             }
         }
+    }
+
+    public void YouWin()
+    {
+        //공격 애니메이션 중지
+        //Dance 
+        StopAllCoroutines();
+        agent.isStopped = true;
+
+        anim.SetTrigger("PlayerDie");
     }
 }
 
